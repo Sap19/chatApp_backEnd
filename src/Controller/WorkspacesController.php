@@ -5,18 +5,10 @@ namespace App\Controller;
 use App\Controller\AppController;
 use Cake\Event\Event;
 use Cake\Http\Exception\NotFoundException;
-use Firebase\JWT\JWT;
-use Cake\Http\Exception\UnauthorizedException;
-use Cake\Utility\Security;
 
 
-/**
- * Users Controller
- *
- * @property \App\Model\Table\UsersTable $Users
- *
- * @method \App\Model\Entity\User[]|\Cake\Datasource\ResultSetInterface paginate($object = null, array $settings = [])
- */
+
+
 class WorkspacesController extends AppController
 {
     public function initialize()
