@@ -15,7 +15,16 @@ class WorkspacesController extends AppController
     {
         parent::initialize();
         $this->loadComponent('RequestHandler');
-
+        $this->Auth-> allow([ 'index']);
+    }
+    public function index()
+    {
+        $workSpaces = $this->paginate($this->Workspaces);
+        
+        $this->set([
+            'Workspaces' => $workSpaces,
+            '_serialize' => ['Workspaces']
+        ]);
     }
 
     public function add()
