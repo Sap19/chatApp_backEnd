@@ -45,11 +45,48 @@ class AppController extends Controller
             'enableBeforeRedirect' => false,
         ]);
         $this->loadComponent('Flash');
+        $this->loadComponent('Auth', [
+            'storage' => 'Memory',
+            'authorize' => ['Controller'],
+            'authenticate' => [
+                'Form' => [
+                    'fields' => [
+                        'username' => 'username',
+                        'password' => 'password'
+                    ],
+                ],
+                'ADmad/JwtAuth.Jwt' => [
+                        'parameter' => 'token',
+                        'userModel' => 'Users',
+                            
+                        'fields' => [
+                            'username' => 'id'
+                        ],
+                        'queryDatasource' => true
+                    ]
+                ],
+                'unauthorizedRedirect' => false,
+                'checkAuthIn' => 'Controller.initialize'      
+        ]);
+    }
+    public function beforeFilter(Event $event)
+    {
+        $this->Auth->allow(['index', 'view', 'display', 'add']);
+    }
+    
+    public function isAuthorized($user)
+    {
+    // Admin can access every action
+    if (isset($user['super_user']) && $user['super_user'] === 1) {
+        return true;
+    }
 
+    // Default deny
+    return false;
+    }
         /*
          * Enable the following component for recommended CakePHP security settings.
          * see https://book.cakephp.org/3/en/controllers/components/security.html
          */
         //$this->loadComponent('Security');
-    }
 }
