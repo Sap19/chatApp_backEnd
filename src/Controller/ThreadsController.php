@@ -14,7 +14,16 @@ class ThreadsController extends AppController
     {
         parent::initialize();
         $this->loadComponent('RequestHandler');
-
+        $this->Auth->allow(["index"]);
+    }
+    public function index()
+    {
+        $threads = $this->paginate($this->Threads);
+        
+        $this->set([
+            'Threads' => $threads,
+            '_serialize' => ['Threads']
+        ]);
     }
     public function add()
     {
