@@ -52,6 +52,8 @@ Router::scope('/', function (RouteBuilder $routes) {
     ]));
     $routes->setExtensions(['json', 'xml']);
     $routes->resources('Users');
+    $routes->resources('Workspaces');
+    $routes->resources('Threads');
     /*
      * Apply a middleware to the current route scope.
      * Requires middleware to be registered through `Application::routes()` with `registerMiddleware()`
@@ -69,7 +71,7 @@ Router::scope('/', function (RouteBuilder $routes) {
      * ...and connect the rest of 'Pages' controller's URLs.
      */
    
-
+    $routes->connect('/', ['controller' => 'Pages', 'action' => 'display', 'home']);
     /*
      * Connect catchall routes for all controllers.
      *
