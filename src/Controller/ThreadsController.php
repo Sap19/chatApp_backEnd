@@ -14,7 +14,7 @@ class ThreadsController extends AppController
     {
         parent::initialize();
         $this->loadComponent('RequestHandler');
-        $this->Auth->allow(["index", "delete"]);
+        $this->Auth->allow(["index", "delete", "edit"]);
     }
     public function index()
     {
@@ -39,6 +39,23 @@ class ThreadsController extends AppController
                 ]);
             }
         }
+    }
+    public function edit($id = null)
+    {
+        $threads = $this->Threads->get($id);
+        if ($this->request->is(['post','put']))
+        {
+            $this->Threads->patchEntity($threads, $this->request->getData());
+            if ($this->Threads->save($threads))
+            {
+                $this->set([
+                    'Thread Edited' => $threads,
+                    '_serialize' => ['Thread Edited']
+                ]);
+            }
+        
+        }
+     
     }
     public function delete($id)
     {
