@@ -68,6 +68,7 @@ class AppController extends Controller
                 'unauthorizedRedirect' => false,
                 'checkAuthIn' => 'Controller.initialize'      
         ]);
+        
     }
     public function beforeFilter(Event $event)
     {

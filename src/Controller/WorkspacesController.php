@@ -19,7 +19,9 @@ class WorkspacesController extends AppController
     }
     public function index()
     {
-        $workSpaces = $this->paginate($this->Workspaces);
+        //$workSpaces = $this->paginate($this->Workspaces);
+        $workSpaces = $this->Workspaces->find('all');
+
         
         $this->set([
             'Workspaces' => $workSpaces,
@@ -66,6 +68,10 @@ class WorkspacesController extends AppController
     {
    
         if ($this->request->getParam('action') === 'add') {
+            return true;
+        }
+
+        if ($this->request->getParam('action') == 'index') {
             return true;
         }
 
