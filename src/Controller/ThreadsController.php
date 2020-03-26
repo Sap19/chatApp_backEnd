@@ -14,7 +14,16 @@ class ThreadsController extends AppController
     {
         parent::initialize();
         $this->loadComponent('RequestHandler');
-
+        $this->Auth->allow(["index", "delete", "edit"]);
+    }
+    public function index()
+    {
+        $threads = $this->paginate($this->Threads);
+        
+        $this->set([
+            'Threads' => $threads,
+            '_serialize' => ['Threads']
+        ]);
     }
     public function add()
     {
@@ -31,6 +40,37 @@ class ThreadsController extends AppController
             }
         }
     }
+    public function edit($id = null)
+    {
+        $threads = $this->Threads->get($id);
+        if ($this->request->is(['post','put']))
+        {
+            $this->Threads->patchEntity($threads, $this->request->getData());
+            if ($this->Threads->save($threads))
+            {
+                $this->set([
+                    'Thread Edited' => $threads,
+                    '_serialize' => ['Thread Edited']
+                ]);
+            }
+        
+        }
+     
+    }
+    public function delete($id)
+    {
+        $this->request->allowMethod(['post', 'delete']);
+
+        $threads = $this->Threads->get($id);
+        if ($this->Threads->delete($threads))
+        {
+            $this->set([
+                'Thread Deleted' => $threads,
+                '_serialize' => ['Thread Deleted']
+            ]);
+        }
+        
+    }
     public function isAuthorized($user)
     {
    
@@ -38,7 +78,7 @@ class ThreadsController extends AppController
             return true;
         }
 
-    
+        
 
         return parent::isAuthorized($user);
     }
