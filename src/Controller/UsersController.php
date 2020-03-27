@@ -61,15 +61,15 @@ class UsersController extends AppController
                 if($admin['super_user'] === 1){
                     $user = $this->Users->patchEntity($user, $this->request->getData());
                     if ($this->Users->save($user)) {
-                        $this->set('data', [
-                            'id' => $user['id'],
-                            'token' => JWT::encode(
-                                [
-                                    'sub' => $user['id'],
+                        $payload = [
+                            'sub' => $user['id'],
                                     'exp' =>  time() + 604800,
                                     'role' => $user['super_user']
-                                ],
-                            Security::getSalt())
+                        ];
+                        $this->set('data', [
+                            'id' => $user['id'],
+                            'token' => JWT::encode($payload,
+                            Security::getSalt(),"HS256")
                         ]);
                     }
                     else
@@ -89,15 +89,15 @@ class UsersController extends AppController
                 $user = $this->Users->patchEntity($user, $this->request->getData());
                 if ($this->Users->save($user)) 
                 {
-                    $this->set('data', [
-                        'id' => $user['id'],
-                        'token' => JWT::encode(
-                            [
-                                'sub' => $user['id'],
+                    $payload = [
+                        'sub' => $user['id'],
                                 'exp' =>  time() + 604800,
                                 'role' => $user['super_user']
-                            ],
-                        Security::getSalt())
+                    ];
+                    $this->set('data', [
+                        'id' => $user['id'],
+                        'token' => JWT::encode($payload,
+                        Security::getSalt(),"HS256")
                     ]);
                 }
                 else
@@ -119,15 +119,16 @@ class UsersController extends AppController
             $user = $this->Auth->identify();
             if ($user) 
             {
+                $payload = [
+                    'sub' => $user['id'],
+                            'exp' =>  time() + 604800,
+                            'role' => $user['super_user']
+                ];
             $this->set([
                 'success' => true,
                 'data' => [
-                    'token' => JWT::encode([
-                        'sub' => $user['id'],
-                        'exp' =>  time() + 604800,
-                        'role' => $user['super_user']
-                    ],
-                    Security::getSalt())
+                    'token' => JWT::encode($payload,
+                    Security::getSalt(),"HS256")
                 ],
                 '_serialize' => ['success', 'data']
             ]);
