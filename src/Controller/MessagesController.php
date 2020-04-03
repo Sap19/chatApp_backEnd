@@ -14,7 +14,7 @@ class MessagesController extends AppController
     {
         parent::initialize();
         $this->loadComponent('RequestHandler');
-        $this->Auth-> allow([ 'add']);
+        
     }
 
     public function add()
@@ -23,7 +23,7 @@ class MessagesController extends AppController
         if ($this->request->is('post')) {
         
             $message = $this->Messages->patchEntity($message, $this->request->getData());
-            
+            $message->user_id = $this->Auth->user('id');
             if ($this->Messages->save($message)) {
                 $this->set([
                     'New Message' => $message,
@@ -31,6 +31,15 @@ class MessagesController extends AppController
                 ]);
             }
         }
+    }
+    public function isAuthorized($user)
+    {
+   
+        if ($this->request->getParam('action') === 'add') {
+            return true;
+        }
+
+        return parent::isAuthorized($user);
     }
 
 }
