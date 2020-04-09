@@ -39,9 +39,6 @@ class UsersTable extends Table
         $this->setDisplayField('id');
         $this->setPrimaryKey('id');
 
-        $this->hasMany('Articles', [
-            'foreignKey' => 'user_id',
-        ]);
         $this->hasMany('Messages', [
             'foreignKey' => 'user_id',
         ]);

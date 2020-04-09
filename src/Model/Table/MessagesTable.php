@@ -17,5 +17,12 @@ class MessagesTable extends Table
             'foreignKey' => 'thread_id',
         ]);
     }
+    public function validationDefault(Validator $validator)
+    {
+        $validator
+            ->notEmpty('body')
+            ->requirePresence('body');
+        return $validator;
+    }
 
 }
