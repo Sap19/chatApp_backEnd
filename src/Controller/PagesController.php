@@ -65,10 +65,4 @@ class PagesController extends AppController
             throw new NotFoundException();
         }
     }
-    public function initialize()
-    {
-        parent::initialize();
-        $this->loadComponent('RequestHandler');
-        $this->Auth-> allow(['display']);
-    }
 }

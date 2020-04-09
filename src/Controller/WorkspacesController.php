@@ -62,20 +62,7 @@ class WorkspacesController extends AppController
         }
      
     }
-    public function delete($id)
-    {
-        $this->request->allowMethod(['post', 'delete']);
 
-        $workSpaces = $this->Workspaces->get($id);
-        if ($this->Workspaces->delete($workSpaces))
-        {
-            $this->set([
-                'Work Space Deleted' => $workSpaces,
-                '_serialize' => ['Work Space Deleted']
-            ]);
-        }
-        
-    }
 
     public function isAuthorized($user)
     {
