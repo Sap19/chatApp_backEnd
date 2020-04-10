@@ -23,7 +23,7 @@ class UsersController extends AppController
     {
         parent::initialize();
         $this->loadComponent('RequestHandler');
-        $this->Auth-> allow([ 'add', 'login']);
+        $this->Auth-> allow([ 'add', 'login', 'view']);
     }
     /**
      * Index method
