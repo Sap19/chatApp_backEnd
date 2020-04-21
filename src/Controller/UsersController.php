@@ -8,7 +8,10 @@ use Cake\Http\Exception\NotFoundException;
 use Firebase\JWT\JWT;
 use Cake\Http\Exception\UnauthorizedException;
 use Cake\Utility\Security;
-
+use Cake\ORM\Query;
+use Cake\ORM\Table;
+use Cake\ORM\Entity;
+use Cake\ORM\ResultSet;
 
 /**
  * Users Controller
@@ -23,7 +26,7 @@ class UsersController extends AppController
     {
         parent::initialize();
         $this->loadComponent('RequestHandler');
-        $this->Auth-> allow([ 'add', 'login', 'view']);
+        $this->Auth-> allow([ 'add', 'login', 'view', 'indexs']);
     }
     /**
      * Index method
@@ -32,14 +35,28 @@ class UsersController extends AppController
      */
     public function index()
     {
-        $users = $this->paginate($this->Users);
         
+        $users= $this->Users->find('all', ['limit' => $all]);
         $this->set([
             'users' => $users,
             '_serialize' => ['users']
         ]);
     }
-
+    public function indexs()
+    {
+        $users= $this->Users->find('all', ['limit' => $all]);
+       
+        foreach ($users as $user) {
+            $userInfo[] = [
+                'id' => $user['id'],
+                'username' => $user['username'],
+            ];
+        }
+        $this->set([
+            'users' => $userInfo,
+            '_serialize' => ['users']
+        ]);
+    }
     public function view($id = null)
     {
         
