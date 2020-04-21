@@ -71,6 +71,7 @@ class AppController extends Controller
     }
     public function beforeFilter(Event $event)
     {
+        $this->response = $this->response->withHeader('Access-Control-Allow-Origin','*');
         $this->Auth->allow(['index', 'view', 'display', 'add']);
     }
     

@@ -13,7 +13,8 @@
         "cboden/ratchet": "^0.4.2",
         "friendsofcake/crud": "^5.0",
         "mobiledetect/mobiledetectlib": "2.*",
-        "react/socket": "^1.4"
+        "react/socket": "^1.4",
+        "ozee31/cakephp-cors": "^1.1"
     },
     "require-dev": {
         "cakephp/bake": "^1.9.0",

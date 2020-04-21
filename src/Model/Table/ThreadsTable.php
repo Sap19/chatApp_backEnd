@@ -10,10 +10,10 @@ class ThreadsTable extends Table
     public function initialize(array $config)
     {
         $this->addBehavior('Timestamp');
-        $this->belongsTo('Worksopaces', [
+        $this->belongsTo('Workspaces', [
             'foreignKey' => 'workspace_id',
         ]);
        
     }
-
+    
 }

@@ -8,7 +8,10 @@ use Cake\Http\Exception\NotFoundException;
 use Firebase\JWT\JWT;
 use Cake\Http\Exception\UnauthorizedException;
 use Cake\Utility\Security;
-
+use Cake\ORM\Query;
+use Cake\ORM\Table;
+use Cake\ORM\Entity;
+use Cake\ORM\ResultSet;
 
 /**
  * Users Controller
@@ -23,7 +26,7 @@ class UsersController extends AppController
     {
         parent::initialize();
         $this->loadComponent('RequestHandler');
-        $this->Auth-> allow([ 'add', 'login']);
+        $this->Auth-> allow([ 'add', 'login', 'view', 'indexs']);
     }
     /**
      * Index method
@@ -32,14 +35,28 @@ class UsersController extends AppController
      */
     public function index()
     {
-        $users = $this->paginate($this->Users);
         
+        $users= $this->Users->find('all', ['limit' => $all]);
         $this->set([
             'users' => $users,
             '_serialize' => ['users']
         ]);
     }
-
+    public function indexs()
+    {
+        $users= $this->Users->find('all', ['limit' => $all]);
+       
+        foreach ($users as $user) {
+            $userInfo[] = [
+                'id' => $user['id'],
+                'username' => $user['username'],
+            ];
+        }
+        $this->set([
+            'users' => $userInfo,
+            '_serialize' => ['users']
+        ]);
+    }
     public function view($id = null)
     {
         
@@ -61,15 +78,15 @@ class UsersController extends AppController
                 if($admin['super_user'] === 1){
                     $user = $this->Users->patchEntity($user, $this->request->getData());
                     if ($this->Users->save($user)) {
-                        $this->set('data', [
-                            'id' => $user['id'],
-                            'token' => JWT::encode(
-                                [
-                                    'sub' => $user['id'],
+                        $payload = [
+                            'sub' => $user['id'],
                                     'exp' =>  time() + 604800,
                                     'role' => $user['super_user']
-                                ],
-                            Security::getSalt())
+                        ];
+                        $this->set('data', [
+                            'id' => $user['id'],
+                            'token' => JWT::encode($payload,
+                            Security::getSalt(),"HS256")
                         ]);
                     }
                     else
@@ -89,15 +106,15 @@ class UsersController extends AppController
                 $user = $this->Users->patchEntity($user, $this->request->getData());
                 if ($this->Users->save($user)) 
                 {
-                    $this->set('data', [
-                        'id' => $user['id'],
-                        'token' => JWT::encode(
-                            [
-                                'sub' => $user['id'],
+                    $payload = [
+                        'sub' => $user['id'],
                                 'exp' =>  time() + 604800,
                                 'role' => $user['super_user']
-                            ],
-                        Security::getSalt())
+                    ];
+                    $this->set('data', [
+                        'id' => $user['id'],
+                        'token' => JWT::encode($payload,
+                        Security::getSalt(),"HS256")
                     ]);
                 }
                 else
@@ -119,15 +136,16 @@ class UsersController extends AppController
             $user = $this->Auth->identify();
             if ($user) 
             {
+                $payload = [
+                    'sub' => $user['id'],
+                            'exp' =>  time() + 604800,
+                            'role' => $user['super_user']
+                ];
             $this->set([
                 'success' => true,
                 'data' => [
-                    'token' => JWT::encode([
-                        'sub' => $user['id'],
-                        'exp' =>  time() + 604800,
-                        'role' => $user['super_user']
-                    ],
-                    Security::getSalt())
+                    'token' => JWT::encode($payload,
+                    Security::getSalt(),"HS256")
                 ],
                 '_serialize' => ['success', 'data']
             ]);
