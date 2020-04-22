@@ -14,15 +14,24 @@ class ThreadsController extends AppController
     {
         parent::initialize();
         $this->loadComponent('RequestHandler');
-        $this->Auth->allow(["index", "delete", "edit"]);
+        $this->Auth->allow(["index", "delete", "edit", 'inThread']);
     }
     public function index()
     {
-        $threads = $this->paginate($this->Threads);
+        $threads = $this->Threads->find('all');
         
         $this->set([
             'Threads' => $threads,
             '_serialize' => ['Threads']
+        ]);
+    }
+    public function inThread($id)
+    {
+        $threads = $this->Threads->find('all')->where(['workspace_id' => $id]);
+        
+        $this->set([
+            'Threads_in_Workspace' => $threads,
+            '_serialize' => ['Threads_in_Workspace']
         ]);
     }
     public function add()
