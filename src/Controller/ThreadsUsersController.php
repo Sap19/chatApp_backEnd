@@ -14,7 +14,7 @@ class ThreadsUsersController extends AppController
     {
         parent::initialize();
         $this->loadComponent('RequestHandler');
-        $this->Auth->allow(["index", "add"]);
+        $this->Auth->allow(["index"]);
     }
 
     public function index($id) // Finds all users that are in the same thread as the User_id that is passed through
