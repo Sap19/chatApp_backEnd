@@ -16,6 +16,7 @@ class WorkspaceUsersController extends AppController
         $this->loadComponent('RequestHandler');
         $this->Auth->allow(["index", "inWorkspace"]);
     }
+   // Finds all users that are in the same workspace as the User_id that is passed through
     public function inWorkspace($id)
     {
         $workspacesUser= $this->WorkspaceUsers->find('all')->where(['user_id' => $id]);
@@ -40,6 +41,7 @@ class WorkspaceUsersController extends AppController
             '_serialize' => ['WorkSpace_Users']
         ]);
     }
+    // Displays all workspaces the user is in 
    public function index($id)
     {
         $workspacesUser= $this->WorkspaceUsers->find('all')->where(['user_id' => $id]);
@@ -49,7 +51,7 @@ class WorkspaceUsersController extends AppController
         ]);
     }
   
-
+    // adds to the workUser table 
     public function add()
     {
         $workspacesUser = $this->WorkspaceUsers->newEntity();
