@@ -31,24 +31,26 @@ class Chat implements MessageComponentInterface {
         $querystring = $conn->httpRequest->getUri()->getQuery(); // gets token from Url
         parse_str($querystring,$queryarray);// seperates the token from url
         $id = $queryarray['token']; // Sets variable $id to token
-        //echo "New connection ({$queryarray['token']})\n";
+       
 
         // --- Decodes the Jwt token
         $de = JWT::decode($id,'e45b0b2592fb0023a11f29d5912d39df148ccb530b3f23951ca1688d529cafa6', ['HS256']);
-        //echo "new $de->sub";
-
+        
         //Set the connection id to user_id
         $conn->resourceId = $de->sub;
         $this->clients->attach($conn);
-        echo "New connection! ({$conn->resourceId})\n";
-        
+
+        //Testing Purposes
+        //echo "New connection! ({$conn->resourceId})\n";
+        //echo "new $de->sub";
+        //echo "New connection ({$queryarray['token']})\n";
 
     }
 
     public function onMessage(ConnectionInterface $from, $msg) {
         $numRecv = count($this->clients) - 1;
-        echo sprintf('Connection %d sending message "%s" to %d other connection%s' . "\n"
-            , $from->resourceId, $msg, $numRecv, $numRecv == 1 ? '' : 's');
+       // echo sprintf('Connection %d sending message "%s" to %d other connection%s' . "\n"
+            //, $from->resourceId, $msg, $numRecv, $numRecv == 1 ? '' : 's');
             
            
         //--- sets the configuration settings to get information from tables
@@ -80,13 +82,13 @@ class Chat implements MessageComponentInterface {
 
             //---- Calls database table to get information needed --
             $query = $threadUser->find('all')->where(['thread_id' => $thread_id]);
-            foreach($query as $user){
-                echo "test : $user->user_id\n";
-            foreach ($this->clients as $client) {
+            foreach($query as $user){ // looks through the thread users
+
+            foreach ($this->clients as $client) { // looks throught the clinet Ids
                 
-                if ($client->resourceId == $user->user_id) {
-                    echo "Client : $client->resourceId\n";
-                    $client->send(json_encode($data));
+                if ($client->resourceId == $user->user_id) { // compares the Thread user with the client id
+
+                    $client->send(json_encode($data)); // sends it only to the ids that matched
                 } 
                 
             }
@@ -98,12 +100,11 @@ class Chat implements MessageComponentInterface {
         // The connection is closed, remove it, as we can no longer send it messages
         $this->clients->detach($conn);
 
-        echo "Connection {$conn->resourceId} has disconnected\n";
+        //echo "Connection {$conn->resourceId} has disconnected\n";
     }
 
-    public function onError(ConnectionInterface $conn, \Exception $e) {
-        echo "An error has occurred: {$e->getMessage()}\n";
-
+    public function onError(ConnectionInterface $conn, \Exception $e) { // if error occurse it closes the connection right away
+        //echo "An error has occurred: {$e->getMessage()}\n";
         $conn->close();
     }
 }

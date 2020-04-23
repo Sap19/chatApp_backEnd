@@ -14,7 +14,7 @@ class WorkspaceUsersController extends AppController
     {
         parent::initialize();
         $this->loadComponent('RequestHandler');
-        $this->Auth->allow(["index", "add", "inWorkspace"]);
+        $this->Auth->allow(["index", "add", "inWorkspace", 'searchByWorkspace']);
     }
     public function inWorkspace($id)
     {
@@ -48,6 +48,15 @@ class WorkspaceUsersController extends AppController
             '_serialize' => ['WorkSpaces']
         ]);
     }
+    public function searchByWorkspace($id)
+    {
+        $workspacesUser= $this->WorkspaceUsers->find('all')->where(['workspace_id' => $id]);
+        $this->set([
+            'WorkSpaces' => $workspacesUser,
+            '_serialize' => ['WorkSpaces']
+        ]);
+    }
+
     public function add()
     {
         $workspacesUser = $this->WorkspaceUsers->newEntity();

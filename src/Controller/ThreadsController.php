@@ -5,7 +5,7 @@ namespace App\Controller;
 use App\Controller\AppController;
 use Cake\Event\Event;
 use Cake\Http\Exception\NotFoundException;
-
+use Cake\ORM\TableRegistry;
 
 
 class ThreadsController extends AppController
@@ -16,7 +16,8 @@ class ThreadsController extends AppController
         $this->loadComponent('RequestHandler');
         $this->Auth->allow(["index", "delete", "edit", 'inThread']);
     }
-    public function index()
+
+    public function index() // passes all the information in the table and turns it to json to be read by the request
     {
         $threads = $this->Threads->find('all');
         
@@ -25,7 +26,7 @@ class ThreadsController extends AppController
             '_serialize' => ['Threads']
         ]);
     }
-    public function inThread($id)
+    public function inThread($id) // passes all the threads from a specific workspace_id
     {
         $threads = $this->Threads->find('all')->where(['workspace_id' => $id]);
         
@@ -34,9 +35,13 @@ class ThreadsController extends AppController
             '_serialize' => ['Threads_in_Workspace']
         ]);
     }
-    public function add()
+
+    public function add() // adds new threads to the db
     {
         $threads = $this->Threads->newEntity();
+        $ThreadUsers = TableRegistry::get('ThreadsUsers');
+        $this->WorkspaceUsers = TableRegistry::get('WorkspaceUsers');
+        
         if ($this->request->is('post')) {
         
             $threads = $this->Threads->patchEntity($threads, $this->request->getData());
@@ -47,9 +52,27 @@ class ThreadsController extends AppController
                     '_serialize' => ['New Thread']
                 ]);
             }
+            
+
+            //---Adds all users in the workspace to the new thread
+            $workspacesUser= $this->WorkspaceUsers->find('all')->where(['workspace_id' => $threads->workspace_id]);
+            foreach($workspacesUser as $users)
+            {
+               
+                $threadsUsers = $ThreadUsers->newEntity();
+                $threadsUsers->thread_id = $threads->id;
+                $threadsUsers->user_id = $users['user_id'];
+
+                $ThreadUsers->save($threadsUsers);
+                    
+            
+            }
+
+
+            
         }
     }
-    public function edit($id = null)
+    public function edit($id = null) // allows to edit thread name by thread_id passed through
     {
         $threads = $this->Threads->get($id);
         if ($this->request->is(['post','put']))
@@ -66,7 +89,7 @@ class ThreadsController extends AppController
         }
      
     }
-    public function delete($id)
+    public function delete($id) //  allows to delete thread by thread_id passed through
     {
         $this->request->allowMethod(['post', 'delete']);
 
@@ -80,7 +103,7 @@ class ThreadsController extends AppController
         }
         
     }
-    public function isAuthorized($user)
+    public function isAuthorized($user) // checks if user is authorized 
     {
    
         if ($this->request->getParam('action') === 'add') {
@@ -88,7 +111,6 @@ class ThreadsController extends AppController
         }
 
         
-
         return parent::isAuthorized($user);
     }
 }

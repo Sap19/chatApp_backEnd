@@ -39,12 +39,16 @@ class UsersTable extends Table
         $this->setDisplayField('id');
         $this->setPrimaryKey('id');
 
+        // Allows others to have connections with user_id
         $this->hasMany('Messages', [
             'foreignKey' => 'user_id',
         ]);
+        // Allows others to have connections with user_id
         $this->hasMany('WorkspaceUsers', [
             'foreignKey' => 'user_id',
         ]);
+
+        // Connects foreign key to the right table 
         $this->belongsToMany('Threads', [
             'foreignKey' => 'user_id',
             'targetForeignKey' => 'thread_id',
@@ -60,6 +64,8 @@ class UsersTable extends Table
      */
     public function validationDefault(Validator $validator)
     {
+        //Information validators 
+        
         $validator
             ->integer('id')
             ->allowEmptyString('id', null, 'create');

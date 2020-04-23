@@ -33,7 +33,7 @@ class UsersController extends AppController
      *
      * @return \Cake\Http\Response|null
      */
-    public function index()
+    public function index() // passes all the information in the Users table and turns it to json to be read by the request
     {
         
         $users= $this->Users->find('all', ['limit' => $all]);
@@ -42,7 +42,7 @@ class UsersController extends AppController
             '_serialize' => ['users']
         ]);
     }
-    public function indexs()
+    public function indexs() // passes all the Users in the table but only passes user_id and username
     {
         $users= $this->Users->find('all', ['limit' => $all]);
        
@@ -57,7 +57,7 @@ class UsersController extends AppController
             '_serialize' => ['users']
         ]);
     }
-    public function view($id = null)
+    public function view($id = null) // allow specific User to be found by User_id passed in  
     {
         
         $user = $this->Users->get($id);
@@ -67,7 +67,7 @@ class UsersController extends AppController
         ]);
         
     }
-    public function add()
+    public function add() // adds user to the user table and returns a JWT token for authentication 
     {
 
         $user = $this->Users->newEntity();
@@ -130,7 +130,7 @@ class UsersController extends AppController
             '_serialize' => ['id', 'data'],
         ]);
     }
-    public function login()
+    public function login() // logins in user if information passed through is correct and gives a JWT token to authenticate.
     {
         if ($this->request->is('post')) {
             $user = $this->Auth->identify();

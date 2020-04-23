@@ -16,7 +16,8 @@ class ThreadsUsersController extends AppController
         $this->loadComponent('RequestHandler');
         $this->Auth->allow(["index", "add"]);
     }
-    public function index($id)
+
+    public function index($id) // Finds all users that are in the same thread as the User_id that is passed through
     {
         $threadsUsers= $this->ThreadsUsers->find('all')->where(['user_id' => $id]);
         $threadTable = $this->ThreadsUsers->find('all');
@@ -41,7 +42,7 @@ class ThreadsUsersController extends AppController
         ]);
     }
     
-    public function add()
+    public function add() // Adds user_id and thread_id to the Thread_User table 
     {
         $threadsUsers = $this->ThreadsUsers->newEntity();
         if ($this->request->is('post')) {
@@ -57,7 +58,7 @@ class ThreadsUsersController extends AppController
         }
     }
     
-    public function isAuthorized($user)
+    public function isAuthorized($user) // checks if user is authorized 
     {
    
         if ($this->request->getParam('action') === 'add') {

@@ -17,7 +17,7 @@ class WorkspacesController extends AppController
         $this->loadComponent('RequestHandler');
         $this->Auth-> allow([ 'index','inWorkspace']);
     }
-    public function index()
+    public function index() // gets all the Workspaces and Displays them in json
     {
         $workSpaces = $this->Workspaces->find('all', ['limit' => $all]);
         $this->set([
@@ -25,7 +25,7 @@ class WorkspacesController extends AppController
             '_serialize' => ['Workspaces']
         ]);
     }
-    public function inWorkspace($id)
+    public function inWorkspace($id) // Finds all users that are in the same workspace as the User_id that is passed through
     {
         $this->WorkspaceUsers = TableRegistry::get('WorkspaceUsers');
         $workSpacesUsers = $this->WorkspaceUsers->find('all')->where(['user_id' => $id]);
@@ -53,7 +53,7 @@ class WorkspacesController extends AppController
             '_serialize' => ['Workspaces']
         ]);
     }
-    public function add()
+    public function add() // adds workspaces 
     {
         $workSpaces = $this->Workspaces->newEntity();
         if ($this->request->is('post')) {
@@ -69,7 +69,7 @@ class WorkspacesController extends AppController
             }
         }
     }
-    public function edit($id = null)
+    public function edit($id = null) // allows to edit workspace name by workspace_id passed through
     {
         $workSpaces = $this->Workspaces->get($id);
         if ($this->request->is(['post','put']))
@@ -86,7 +86,7 @@ class WorkspacesController extends AppController
         }
      
     }
-    public function delete($id)
+    public function delete($id) // allows to Delete workspace by workspace_id passed through
     {
         $this->request->allowMethod(['post', 'delete']);
 
@@ -101,15 +101,15 @@ class WorkspacesController extends AppController
         
     }
 
-    public function isAuthorized($user)
+    public function isAuthorized($user) // checks if user is authorized 
     {
    
         if ($this->request->getParam('action') === 'add') {
             return true;
         }
 
-    
-        if (in_array($this->request->getParam('action'), ['edit', 'delete'])) {
+    //-------------- Checks if the user_id owns the workspace to be able to edit or delete the workspace --------- 
+        if (in_array($this->request->getParam('action'), ['edit', 'delete'])) { 
            
             $workSpacesId = (int)$this->request->getParam('pass.0');
             if ($this->Workspaces->isOwnedBy($workSpacesId, $user['id'])) {
