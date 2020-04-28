@@ -120,7 +120,7 @@ class UsersController extends AppController
                 else
                     {
                         $this->set('data', [
-                            'message' => "Failed User with that username or email already exsist"
+                            'message' => "Failed"
                         ]);
                     }   
             }
