@@ -5,7 +5,7 @@ namespace App\Controller;
 use App\Controller\AppController;
 use Cake\Event\Event;
 use Cake\Http\Exception\NotFoundException;
-
+use Cake\ORM\TableRegistry;
 
 
 class WorkspaceUsersController extends AppController
@@ -16,6 +16,7 @@ class WorkspaceUsersController extends AppController
         $this->loadComponent('RequestHandler');
         $this->Auth->allow(["index", "inWorkspace"]);
     }
+
    // Finds all users that are in the same workspace as the User_id that is passed through
     public function inWorkspace($id)
     {
@@ -30,7 +31,7 @@ class WorkspaceUsersController extends AppController
                {
                 $userInfo[] =[
                     'id' => $table['id'],
-                    'thread_id' => $user['workspace_id'],
+                    'WorkSpace_id' => $user['workspace_id'],
                     'user_id' => $table['user_id'],
                 ];
             }
