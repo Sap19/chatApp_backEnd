@@ -14,7 +14,35 @@ class WorkspaceUsersController extends AppController
     {
         parent::initialize();
         $this->loadComponent('RequestHandler');
-        $this->Auth->allow(["index", "inWorkspace"]);
+        $this->Auth->allow(["index", "inWorkspace","UsersInWorkspace"]);
+    }
+    public function UsersInWorkspace($work_id)
+    {
+        $workspacesUser = $this->WorkspaceUsers->find('all')->where(['workspace_id' => $work_id]);
+        $this->Users = TableRegistry::get('Users');
+        $user = $this->Users->find('all');
+
+        foreach($workspacesUser as $workSpace)
+        {
+            foreach($user as $userInfo)
+            {
+                if($workSpace['user_id'] == $userInfo['id'])
+                {
+                    $infoReturn[] = [
+                        "id" => $workSpace['id'],
+                        "workspace_id" => $workSpace['workspace_id'],
+                        "user_id" => $workSpace['user_id'],
+                        "username" => $userInfo['username']
+                    ];
+                }
+            }
+
+        }
+
+        $this->set([
+            'WorkSpace_Users' => $infoReturn,
+            '_serialize' => ['WorkSpace_Users']
+        ]);
     }
 
    // Finds all users that are in the same workspace as the User_id that is passed through
