@@ -18,7 +18,7 @@ class MessagesController extends AppController
         $this->loadComponent('RequestHandler');
         $this->Auth->allow(["index"]);
     }
-    public function index($id)
+    public function index($id = null)
     {
         $query = $this->Messages->find('all')->where(['thread_id' => $id]);
         //$message = $this->paginate($this->Messages->getAlias($this->Threads));
