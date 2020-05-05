@@ -16,6 +16,8 @@ class WorkspaceUsersController extends AppController
         $this->loadComponent('RequestHandler');
         $this->Auth->allow(["index", "inWorkspace","UsersInWorkspace"]);
     }
+
+    // Gets all the users that are inside of the workspace_id passed in 
     public function UsersInWorkspace($work_id)
     {
         $workspacesUser = $this->WorkspaceUsers->find('all')->where(['workspace_id' => $work_id]);
