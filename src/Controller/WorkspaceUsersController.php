@@ -5,7 +5,7 @@ namespace App\Controller;
 use App\Controller\AppController;
 use Cake\Event\Event;
 use Cake\Http\Exception\NotFoundException;
-
+use Cake\ORM\TableRegistry;
 
 
 class WorkspaceUsersController extends AppController
@@ -14,8 +14,40 @@ class WorkspaceUsersController extends AppController
     {
         parent::initialize();
         $this->loadComponent('RequestHandler');
-        $this->Auth->allow(["index", "add", "inWorkspace", 'searchByWorkspace']);
+        $this->Auth->allow(["index", "inWorkspace","UsersInWorkspace"]);
     }
+
+    // Gets all the users that are inside of the workspace_id passed in 
+    public function UsersInWorkspace($work_id)
+    {
+        $workspacesUser = $this->WorkspaceUsers->find('all')->where(['workspace_id' => $work_id]);
+        $this->Users = TableRegistry::get('Users');
+        $user = $this->Users->find('all');
+
+        foreach($workspacesUser as $workSpace)
+        {
+            foreach($user as $userInfo)
+            {
+                if($workSpace['user_id'] == $userInfo['id'])
+                {
+                    $infoReturn[] = [
+                        "id" => $workSpace['id'],
+                        "workspace_id" => $workSpace['workspace_id'],
+                        "user_id" => $workSpace['user_id'],
+                        "username" => $userInfo['username']
+                    ];
+                }
+            }
+
+        }
+
+        $this->set([
+            'WorkSpace_Users' => $infoReturn,
+            '_serialize' => ['WorkSpace_Users']
+        ]);
+    }
+
+   // Finds all users that are in the same workspace as the User_id that is passed through
     public function inWorkspace($id)
     {
         $workspacesUser= $this->WorkspaceUsers->find('all')->where(['user_id' => $id]);
@@ -29,7 +61,7 @@ class WorkspaceUsersController extends AppController
                {
                 $userInfo[] =[
                     'id' => $table['id'],
-                    'thread_id' => $user['workspace_id'],
+                    'WorkSpace_id' => $user['workspace_id'],
                     'user_id' => $table['user_id'],
                 ];
             }
@@ -40,6 +72,7 @@ class WorkspaceUsersController extends AppController
             '_serialize' => ['WorkSpace_Users']
         ]);
     }
+    // Displays all workspaces the user is in 
    public function index($id)
     {
         $workspacesUser= $this->WorkspaceUsers->find('all')->where(['user_id' => $id]);
@@ -48,15 +81,8 @@ class WorkspaceUsersController extends AppController
             '_serialize' => ['WorkSpaces']
         ]);
     }
-    public function searchByWorkspace($id)
-    {
-        $workspacesUser= $this->WorkspaceUsers->find('all')->where(['workspace_id' => $id]);
-        $this->set([
-            'WorkSpaces' => $workspacesUser,
-            '_serialize' => ['WorkSpaces']
-        ]);
-    }
-
+  
+    // adds to the workUser table 
     public function add()
     {
         $workspacesUser = $this->WorkspaceUsers->newEntity();

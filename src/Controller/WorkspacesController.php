@@ -15,11 +15,19 @@ class WorkspacesController extends AppController
     {
         parent::initialize();
         $this->loadComponent('RequestHandler');
-        $this->Auth-> allow([ 'index','inWorkspace']);
+        $this->Auth-> allow([ 'index','inWorkspace', 'view']);
     }
     public function index() // gets all the Workspaces and Displays them in json
     {
         $workSpaces = $this->Workspaces->find('all', ['limit' => $all]);
+        $this->set([
+            'Workspaces' => $workSpaces,
+            '_serialize' => ['Workspaces']
+        ]);
+    }
+    public function view($id) // gets a specific workspace by $id
+    {
+        $workSpaces = $this->Workspaces->get($id);
         $this->set([
             'Workspaces' => $workSpaces,
             '_serialize' => ['Workspaces']

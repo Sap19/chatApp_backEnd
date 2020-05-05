@@ -60,9 +60,16 @@ class UsersController extends AppController
     public function view($id = null) // allow specific User to be found by User_id passed in  
     {
         
-        $user = $this->Users->get($id);
+        $users = $this->Users->find('all')->where(['username' => $id]);
+      
+        foreach($users as $user)
+        $userinfo[] = [
+            'id' => $user->id,
+            'username' => $id,
+        ];
+
         $this->set([
-            'user' => $user,
+            'user' => $userinfo,
             '_serialize' => ['user']
         ]);
         
@@ -120,7 +127,7 @@ class UsersController extends AppController
                 else
                     {
                         $this->set('data', [
-                            'message' => "Failed User with that username or email already exsist"
+                            'message' => "Failed"
                         ]);
                     }   
             }

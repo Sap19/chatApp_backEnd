@@ -71,14 +71,30 @@ class Chat implements MessageComponentInterface {
         //gets table needed
         $message = $locator->get('Messages');
         $threadUser = $locator->get('ThreadsUsers');
-            
+        $threads =  $locator->get('Threads');
+        $workSpaces = $locator->get('Workspaces');
 
+        
+        
         $data = json_decode($msg,true); // gets the information from the message sent
         $data['from'] = $data['user_id']; // sets from to the user id
         $thread_id = $data['thread_id']; // sets variable thread_id to the thread_id from the data recieved
         $data['msg']  = $data['body']; // sets msg to the body data from data recieved
         $data['created']  = date("M-d-y h:i:s"); // formats the data that was recieved
         
+        
+        $ThreadName = $threads->get($thread_id); // searches thread table with thread_id and gets the Thread name
+        if($ThreadName->name != null)
+        {
+            $data['threadName']  = $ThreadName->name; // sets threadName to the name of the thread we got
+            $workspaceName = $workSpaces->get($ThreadName->workspace_id); // searches workspace table with workspace_id to get Workspace Name
+            $data['workspaceName'] = $workspaceName->name; // sets workSpaceName to the name we got
+        }
+        else{
+        
+        }
+      
+
 
             //---- Calls database table to get information needed --
             $query = $threadUser->find('all')->where(['thread_id' => $thread_id]);
