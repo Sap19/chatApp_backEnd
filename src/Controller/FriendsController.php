@@ -26,7 +26,7 @@ class FriendsController extends AppController
             '_serialize' => ['friends']
         ]);
     }
-    public function view($id) // passes all the threads from a specific workspace_id
+    public function view($id) // passes all the friends list  from a specific user_id
     {
         $friends = $this->Friends->find('all')->where(['user_id' => $id]);
         
@@ -68,18 +68,11 @@ class FriendsController extends AppController
         }
     }
     
-    public function delete($id) //  allows to delete thread by thread_id passed through
+    public function delete($id) //  allows to delete friend with id that was passsed in
     {
         $this->request->allowMethod(['post', 'delete']);
 
-        $threads = $this->Threads->get($id);
-        if ($this->Threads->delete($threads))
-        {
-            $this->set([
-                'Thread Deleted' => $threads,
-                '_serialize' => ['Thread Deleted']
-            ]);
-        }
+       
         
     }
     public function isAuthorized($user) // checks if user is authorized 
