@@ -14,7 +14,6 @@ class FriendsController extends AppController
     {
         parent::initialize();
         $this->loadComponent('RequestHandler');
-        $this->Auth->allow(["index", "delete", "edit", "view"]);
     }
 
     public function index() // passes all the information in the table and turns it to json to be read by the request
@@ -78,7 +77,7 @@ class FriendsController extends AppController
     public function isAuthorized($user) // checks if user is authorized 
     {
    
-        if ($this->request->getParam('action') === 'add') {
+        if (in_array($this->request->getParam('action'), ["index", "delete", "edit", "view"])) {
             return true;
         }
 

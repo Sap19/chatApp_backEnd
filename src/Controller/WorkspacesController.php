@@ -15,7 +15,7 @@ class WorkspacesController extends AppController
     {
         parent::initialize();
         $this->loadComponent('RequestHandler');
-        $this->Auth-> allow([ 'index','inWorkspace', 'view']);
+       
     }
     public function index() // gets all the Workspaces and Displays them in json
     {
@@ -117,7 +117,7 @@ class WorkspacesController extends AppController
         }
 
     //-------------- Checks if the user_id owns the workspace to be able to edit or delete the workspace --------- 
-        if (in_array($this->request->getParam('action'), ['edit', 'delete'])) { 
+        if (in_array($this->request->getParam('action'), ['edit', 'delete' ,'index','inWorkspace', 'view'])) { 
            
             $workSpacesId = (int)$this->request->getParam('pass.0');
             if ($this->Workspaces->isOwnedBy($workSpacesId, $user['id'])) {

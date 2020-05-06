@@ -14,7 +14,7 @@ class ThreadsUsersController extends AppController
     {
         parent::initialize();
         $this->loadComponent('RequestHandler');
-        $this->Auth->allow(["index", "add"]);
+        
     }
 
     public function index($id) // Finds all users that are in the same thread as the User_id that is passed through
@@ -61,7 +61,7 @@ class ThreadsUsersController extends AppController
     public function isAuthorized($user) // checks if user is authorized 
     {
    
-        if ($this->request->getParam('action') === 'add') {
+        if (in_array($this->request->getParam('action'), ["index", "add"])) {
             return true;
         }
 

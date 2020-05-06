@@ -16,7 +16,7 @@ class MessagesController extends AppController
     {
         parent::initialize();
         $this->loadComponent('RequestHandler');
-        $this->Auth->allow(["index"]);
+        
     }
     public function index($id = null)
     {
@@ -52,7 +52,7 @@ class MessagesController extends AppController
     public function isAuthorized($user)
     {
    
-        if ($this->request->getParam('action') === 'add') {
+        if (in_array($this->request->getParam('action'), ["index"])) {
             return true;
         }
 

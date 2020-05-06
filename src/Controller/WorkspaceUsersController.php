@@ -14,7 +14,7 @@ class WorkspaceUsersController extends AppController
     {
         parent::initialize();
         $this->loadComponent('RequestHandler');
-        $this->Auth->allow(["index", "inWorkspace","UsersInWorkspace"]);
+        
     }
 
     // Gets all the users that are inside of the workspace_id passed in 
@@ -102,7 +102,7 @@ class WorkspaceUsersController extends AppController
     public function isAuthorized($user)
     {
    
-        if ($this->request->getParam('action') === 'add') {
+        if (in_array($this->request->getParam('action'),["index", "inWorkspace","UsersInWorkspace"])) {
             return true;
         }
 

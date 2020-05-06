@@ -14,7 +14,7 @@ class ThreadsController extends AppController
     {
         parent::initialize();
         $this->loadComponent('RequestHandler');
-        $this->Auth->allow(["index", "delete", "edit", 'inThread']);
+        
     }
 
     public function index() // passes all the information in the table and turns it to json to be read by the request
@@ -106,7 +106,7 @@ class ThreadsController extends AppController
     public function isAuthorized($user) // checks if user is authorized 
     {
    
-        if ($this->request->getParam('action') === 'add') {
+        if (in_array($this->request->getParam('action'), ["index", "delete", "edit", 'inThread'])) {
             return true;
         }
 
