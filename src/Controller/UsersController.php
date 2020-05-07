@@ -12,6 +12,12 @@ use Cake\ORM\Query;
 use Cake\ORM\Table;
 use Cake\ORM\Entity;
 use Cake\ORM\ResultSet;
+use  Cake\I18n\FrozenTime;
+use Cake\Core\Configure;
+use Cake\Auth\DefaultPasswordHasher;
+use Cake\Mailer\TransportFactory;
+use Cake\Mailer\Email;
+
 
 /**
  * Users Controller
@@ -26,7 +32,7 @@ class UsersController extends AppController
     {
         parent::initialize();
         $this->loadComponent('RequestHandler');
-        $this->Auth-> allow([ 'add', 'login', 'view', 'indexs']);
+        $this->Auth-> allow([ 'add', 'login', 'view', 'indexs', 'forgotPassword', 'resetPassword']);
     }
     /**
      * Index method
@@ -163,4 +169,130 @@ class UsersController extends AppController
             }
         }
     }
+
+
+	/**
+	 * Generate Password Reset Token
+	 *
+	 * @param User $user
+	 * @param mixed int
+	 * @return void
+	 */
+    public function generatePasswordResetToken($user, int $expiration = 15): string 
+    {
+       
+		$data = [
+            'id' => $user->id,
+			'expiration' => (new FrozenTime())->addMinutes($expiration)
+        ];
+        
+        $key = Security::getSalt();
+
+		return base64_encode(Security::encrypt(json_encode($data), $key));
+	}
+
+	/**
+	 * Validate Password Reset Token
+	 *
+	 * @param string $value
+	 * @return User|null
+	 */
+    public function validatePasswordResetToken($value)
+    {   
+        
+        $key = Security::getSalt();
+       
+		if ($token = Security::decrypt(base64_decode($value), $key)) {
+            
+            $token = json_decode($token, true);
+            $exp = new FrozenTime($token['expiration']);
+			if  ($exp->gt(new FrozenTime())) {
+               
+                return $this->Users->get($token['id']);
+                
+			}
+        }
+
+		return null;
+    }
+
+    //----- Sends a link with a token to the User's Email so they can reset the password
+    public function forgotPassword($Useremail)
+    {
+        
+        if($this->request->is('post'))
+        {
+            
+       
+            $user = $this->Users->find('all')->where(['email'=>$Useremail])->first();
+            
+            $tokenID = $this->generatePasswordResetToken($user);
+            
+           
+          dd($tokenID);
+
+                //$this->Flash->success('Reset Password link has been sent to your email ('.$Useremail.')! Please Check Your Email.');
+                $this->set([
+                    'email' => "Email Has Been Sent",
+                    '_serialize' => ['email'],
+                ]);
+            
+                TransportFactory::setConfig('sendgrid', [
+                    'host' => 'smtp.sendgrid.net',
+                    'port' => 587,
+                    'username' => 'apikey',
+                    'password' => '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',
+                    'className' => 'Smtp'
+                  ]);
+                  $email = new Email('default');
+                  $email->setTransport('sendgrid');
+                  $email->setEmailFormat('html');
+                  $email->setFrom('steven.portillo@hydracor.net', 'ChatApp');
+                  $email->setSubject('Please Confirm your rest password');
+                  $email->setTo($Useremail);
+                  $email->send('Hello '.$Useremail.' <br/> Please Click the link below to reset your password <br/><br/><a href="http://206.189.202.188:8082/resetPassword.html?email='.$Useremail.'&token='.$tokenID.'">Reset Password</a>');
+               
+        }
+    }
+// ------- When user submits reset password it validates if the token belongs to that user and if it hasnt expired and changes passowrd to new password
+    public function resetPassword($Useremail)
+    {
+        
+        $token = $this->request->getQuery('token');
+        $password = $this->request->getQuery('password');
+       
+        
+        $user= $this->Users->find('all')->where(['email'=>$Useremail])->first();
+       
+        if ($this->request->is('post')) 
+        {
+           
+           
+            $tokenCheck = $this->validatePasswordResetToken($token);
+            $user->password = $password ;
+         
+            if ($this->Users->save($user) && $tokenCheck['id'] ==  $user->id) 
+            {
+                
+                $this->set([
+                    'password' => "Your password has been updated.",
+                    '_serialize' => ['password'],
+                ]);
+                
+            }
+            else
+            {
+            $this->set([
+                'password' => "Token Expired.",
+                '_serialize' => ['password'],
+            ]);
+            }
+        
+        }
+    }
+
+
+
+
+
 }

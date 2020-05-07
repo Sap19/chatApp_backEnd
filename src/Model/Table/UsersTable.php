@@ -74,30 +74,30 @@ class UsersTable extends Table
             ->scalar('first_name')
             ->maxLength('first_name', 255)
             ->requirePresence('first_name', 'create')
-            ->notEmptyString('first_name');
+            ->notEmptyString('first_name', 'A First Name Is Required');
 
         $validator
             ->scalar('last_name')
             ->maxLength('last_name', 255)
             ->requirePresence('last_name', 'create')
-            ->notEmptyString('last_name');
+            ->notEmptyString('last_name', 'A Last Name Is Required');
 
         $validator
             ->scalar('username')
             ->maxLength('username', 255)
             ->requirePresence('username', 'create')
-            ->notEmptyString('username');
+            ->notEmptyString('username', 'A Username Is Required');
 
         $validator
             ->email('email')
             ->requirePresence('email', 'create')
-            ->notEmptyString('email');
+            ->notEmptyString('email', 'A Email Is Required');
 
         $validator
             ->scalar('password')
             ->maxLength('password', 255)
             ->requirePresence('password', 'create')
-            ->notEmptyString('password');
+            ->notEmptyString('password', 'A Password Is Required');
 
         $validator
             ->integer('super_user')

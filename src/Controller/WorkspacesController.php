@@ -33,7 +33,7 @@ class WorkspacesController extends AppController
             '_serialize' => ['Workspaces']
         ]);
     }
-    public function inWorkspace($id) // Finds all users that are in the same workspace as the User_id that is passed through
+    public function inWorkspace($id = null) // Finds all users that are in the same workspace as the User_id that is passed through
     {
         $this->WorkspaceUsers = TableRegistry::get('WorkspaceUsers');
         $workSpacesUsers = $this->WorkspaceUsers->find('all')->where(['user_id' => $id]);
